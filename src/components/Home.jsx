@@ -1,6 +1,6 @@
 import React from "react";
-import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useState,useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useSearchParams } from "react-router-dom";
 import { addToPastes, updateToPastes } from "../redux/pasteSlice";
 
@@ -10,7 +10,15 @@ const Home = () => {
   const [searchPrams, setSearchPrams] = useSearchParams();
   const pasteId = searchPrams.get("pasteId");
   const dispatch = useDispatch();
+  const allPaste =useSelector((state)=>state.paste.pastes);
 
+  useEffect(()=>{
+    if(pasteId){
+        const paste =allPaste.find((p)=>p._id=== pasteId);
+        setTitle(paste.title);
+        setValue(paste.content)
+    }
+  },[]);
   function createPaste() {
     const paste = {
       title: title,
@@ -44,6 +52,7 @@ const Home = () => {
               Title
             </label>
             <input
+            require
               type="text"
               placeholder="Enter title here..."
               value={title}
@@ -57,6 +66,7 @@ const Home = () => {
               Content
             </label>
             <textarea
+            require
               value={value}
               placeholder="Enter content here..."
               onChange={(e) => setValue(e.target.value)}
